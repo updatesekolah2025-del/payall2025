@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayHub - Sistem Pembayaran Multiguna</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #fca311;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 0.8s ease;
+        }
+        
+        header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        
+        .logo {
+            font-size: 2.8rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .payment-form {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            animation: slideInLeft 0.8s ease;
+        }
+        
+        .form-title {
+            color: var(--primary);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-gray);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .payment-categories {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .category-btn {
+            padding: 12px;
+            background: var(--light);
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .category-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .category-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .category-btn i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .btn {
+            padding: 14px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-print {
+            background: var(--success);
+        }
+        
+        .btn-print:hover {
+            background: #3a9fc7;
+        }
+        
+        .btn-reset {
+            background: var(--gray);
+        }
+        
+        .btn-reset:hover {
+            background: #5a6268;
+        }
+        
+        .btn-download {
+            background: var(--warning);
+        }
+        
+        .btn-download:hover {
+            background: #e69500;
+        }
+        
+        .receipt-preview {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            animation: slideInRight 0.8s ease;
+        }
+        
+        .receipt {
+            background: #f9f9f9;
+            border: 1px dashed #ccc;
+            padding: 15px;
+            flex-grow: 1;
+            font-family: 'Courier New', monospace;
+            border-radius: 10px;
+            font-size: 12px;
+            transform: scale(0.95);
+            transform-origin: top center;
+            width: 95%;
+            margin: 0 auto;
+        }
+        
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #000;
+        }
+        
+        .receipt-header h2 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .receipt-details {
+            margin-bottom: 15px;
+        }
+        
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        
+        .receipt-label {
+            font-weight: bold;
+        }
+        
+        .divider {
+            border-top: 1px dashed #000;
+            margin: 10px 0;
+        }
+        
+        .receipt-total {
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 2px solid #000;
+        }
+        
+        .receipt-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 10px;
+            color: #555;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .action-buttons .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .history-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 1s ease;
+        }
+        
+        .history-title {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-gray);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-item:hover {
+            background: var(--light);
+        }
+        
+        /* New styles for better responsiveness and modern look */
+        .voucher-field, .account-fields {
+            display: none;
+        }
+        
+        .highlight {
+            background-color: rgba(67, 97, 238, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .info-text {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .payment-info {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--success);
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .notification i {
+            font-size: 1.2rem;
+        }
+        
+        .notification.success i {
+            color: var(--success);
+        }
+        
+        .notification.error i {
+            color: var(--danger);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-action-btn {
+            padding: 10px 15px;
+            background: var(--light);
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 150px;
+            justify-content: center;
+        }
+        
+        .quick-action-btn:hover {
+            background: #e9ecef;
+        }
+        
+        /* Statistics */
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .stat-card i {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        /* Voucher display */
+        .voucher-display {
+            display: none;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+            border: 2px dashed #ff6b6b;
+        }
+        
+        .voucher-display h3 {
+            color: #d23636;
+            margin-bottom: 10px;
+        }
+        
+        .voucher-code {
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #333;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        @media (max-width: 1200px) {
+            .payment-categories {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .statistics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .payment-categories {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .statistics {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .payment-categories {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .statistics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .quick-action-btn {
+                min-width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .payment-categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-title, .history-title {
+                font-size: 1.3rem;
+            }
+            
+            .logo {
+                font-size: 2.2rem;
+            }
+            
+            .statistics {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideInLeft {
+            from { transform: translateX(-30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .receipt, .receipt * {
+                visibility: visible;
+            }
+            .receipt {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none;
+                box-shadow: none;
+                background: white;
+                transform: scale(1);
+                font-size: 12px;
+                padding: 10px;
+            }
+            .action-buttons, .history-section, .notification {
+                display: none;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <h1>PayHub</h1>
+            <p>Sistem Pembayaran Multiguna - Bayar Semua Tagihan dalam Satu Aplikasi</p>
+        </header>
+        
+        <div class="quick-actions">
+            <div class="quick-action-btn" onclick="quickFill('listrik')">
+                <i class="fas fa-bolt"></i> Isi Cepat Listrik
+            </div>
+            <div class="quick-action-btn" onclick="quickFill('internet')">
+                <i class="fas fa-wifi"></i> Isi Cepat Internet
+            </div>
+            <div class="quick-action-btn" onclick="quickFill('air')">
+                <i class="fas fa-tint"></i> Isi Cepat Air
+            </div>
+            <div class="quick-action-btn" onclick="showStatistics()">
+                <i class="fas fa-chart-bar"></i> Lihat Statistik
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="payment-form">
+                <h2 class="form-title"><i class="fas fa-credit-card"></i> Form Pembayaran</h2>
+                
+                <div class="payment-info">
+                    <i class="fas fa-info-circle"></i> Rekening Tujuan Pembayaran: <strong>Norek - SALAM SATU DATA</strong>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentCategory"><i class="fas fa-tags"></i> Kategori Pembayaran</label>
+                    <div class="payment-categories">
+                        <div class="category-btn active" data-category="listrik">
+                            <i class="fas fa-bolt"></i>
+                            <div>Listrik</div>
+                        </div>
+                        <div class="category-btn" data-category="internet">
+                            <i class="fas fa-wifi"></i>
+                            <div>Internet</div>
+                        </div>
+                        <div class="category-btn" data-category="air">
+                            <i class="fas fa-tint"></i>
+                            <div>Air</div>
+                        </div>
+                        <div class="category-btn" data-category="telepon">
+                            <i class="fas fa-phone"></i>
+                            <div>Telepon</div>
+                        </div>
+                        <div class="category-btn" data-category="tv">
+                            <i class="fas fa-tv"></i>
+                            <div>TV Berlangganan</div>
+                        </div>
+                        <div class="category-btn" data-category="pajak">
+                            <i class="fas fa-receipt"></i>
+                            <div>Pajak</div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="paymentCategory" value="listrik">
+                </div>
+                
+                <div class="form-group voucher-field">
+                    <label for="voucherNumber"><i class="fas fa-ticket-alt"></i> Nomor Voucher <span class="tooltip"><i class="fas fa-question-circle"></i>
+                        <span class="tooltiptext">Nomor voucher 16 digit untuk pembayaran listrik</span>
+                    </span></label>
+                    <input type="text" id="voucherNumber" placeholder="Masukkan 16 digit nomor voucher (contoh: 1234-5678-9012-3456)" maxlength="19">
+                    <p class="info-text">Wajib diisi untuk pembayaran listrik. Format: xxxx-xxxx-xxxx-xxxx</p>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="customerId"><i class="fas fa-id-card"></i> ID Pelanggan</label>
+                        <input type="text" id="customerId" placeholder="Masukkan ID pelanggan">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customerName"><i class="fas fa-user"></i> Nama Pelanggan</label>
+                        <input type="text" id="customerName" placeholder="Nama lengkap pelanggan">
+                    </div>
+                </div>
+                
+                <div class="form-group" id="customFieldGroup">
+                    <label id="customFieldLabel"><i class="fas fa-bolt"></i> Daya Listrik (VA)</label>
+                    <input type="text" id="customField" placeholder="Contoh: 900, 1300, 2200">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="billingPeriod"><i class="fas fa-calendar"></i> Periode Tagihan</label>
+                        <input type="text" id="billingPeriod" placeholder="Contoh: Oktober 2023">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dueDate"><i class="fas fa-clock"></i> Tanggal Jatuh Tempo</label>
+                        <input type="date" id="dueDate">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="billAmount"><i class="fas fa-money-bill"></i> Jumlah Tagihan (Rp)</label>
+                        <input type="number" id="billAmount" placeholder="Jumlah tagihan dalam Rupiah">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adminFee"><i class="fas fa-fee"></i> Biaya Admin (Rp)</label>
+                        <input type="number" id="adminFee" value="2500">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentMethod"><i class="fas fa-credit-card"></i> Metode Pembayaran</label>
+                    <select id="paymentMethod">
+                        <option value="transfer">Transfer Bank</option>
+                        <option value="debit">Kartu Debit</option>
+                        <option value="credit">Kartu Kredit</option>
+                        <option value="ewallet">E-Wallet</option>
+                        <option value="cash">Tunai</option>
+                    </select>
+                </div>
+                
+                <div class="account-fields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="sourceAccount"><i class="fas fa-piggy-bank"></i> Rekening Sumber</label>
+                            <input type="text" id="sourceAccount" placeholder="Nomor rekening pengirim">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="targetAccount"><i class="fas fa-landmark"></i> Rekening Tujuan</label>
+                            <input type="text" id="targetAccount" value="NOREK - SALAM SATU DATA" readonly>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes"><i class="fas fa-sticky-note"></i> Catatan (Opsional)</label>
+                    <textarea id="notes" rows="2" placeholder="Tambahkan catatan untuk transaksi ini"></textarea>
+                </div>
+                
+                <button class="btn" onclick="generateReceipt()">
+                    <i class="fas fa-calculator"></i> Hitung Total & Generate Struk
+                </button>
+
+                <!-- Voucher Display (akan muncul setelah transaksi listrik) -->
+                <div class="voucher-display" id="voucherDisplay">
+                    <h3><i class="fas fa-ticket-alt"></i> Voucher Listrik Berhasil Dibuat</h3>
+                    <p>Nomor Voucher:</p>
+                    <div class="voucher-code" id="generatedVoucher"></div>
+                    <p class="info-text">Simpan nomor voucher ini untuk keperluan pembayaran listrik</p>
+                </div>
+            </div>
+            
+            <div class="receipt-preview">
+                <h2 class="form-title"><i class="fas fa-receipt"></i> Pratinjau Struk</h2>
+                
+                <div class="receipt" id="receipt">
+                    <div class="receipt-header">
+                        <h2>OPS PAYMENT SYSTEM</h2>
+                        <p>BUKTI PEMBAYARAN RESMI</p>
+                        <p>Rekening Tujuan: NOREK</p>
+                        <p>Atas Nama: SALAM SATU DATA</p>
+                    </div>
+                    
+                    <div class="receipt-details">
+                        <div class="receipt-item">
+                            <span class="receipt-label">No. Referensi:</span>
+                            <span id="refNumber">REF20231025-001</span>
+                        </div>
+                        <div class="receipt-item">
+                            <span class="receipt-label">Tanggal & Waktu:</span>
+                            <span id="datetime">25-Oktober-2023 14:30:15</span>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="receipt-item">
+                            <span class="receipt-label">Jenis Pembayaran:</span>
+                            <span id="receiptPaymentType">LISTRIK</span>
+                        </div>
+                        
+                        <div class="receipt-item" id="receiptVoucherField" style="display: none;">
+                            <span class="receipt-label">Nomor Voucher:</span>
+                            <span id="receiptVoucherNumber">1234-5678-9012-3456</span>
+                        </div>
+                        
+                        <div class="receipt-item">
+                            <span class="receipt-label">ID Pelanggan:</span>
+                            <span id="receiptCustomerId">532110000123</span>
+                        </div>
+                        <div class="receipt-item">
+                            <span class="receipt-label">Nama Pelanggan:</span>
+                            <span id="receiptCustomerName">Budi Santoso</span>
+                        </div>
+                        <div class="receipt-item">
+                            <span class="receipt-label">Periode Tagihan:</span>
+                            <span id="receiptBillingPeriod">Oktober 2023</span>
+                        </div>
+                        <div class="receipt-item">
+                            <span class="receipt-label">Jatuh Tempo:</span>
+                            <span id="receiptDueDate">25 Oktober 2023</span>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="receipt-item">
+                            <span class="receipt-label" id="receiptCustomLabel">Daya Listrik:</span>
+                            <span id="receiptCustomValue">1300 VA</span>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="receipt-item">
+                            <span>Tagihan Listrik:</span>
+                            <span>Rp <span id="receiptBillAmount">750.000</span></span>
+                        </div>
+                        <div class="receipt-item">
+                            <span>Biaya Admin:</span>
+                            <span>Rp <span id="receiptAdminFee">2.500</span></span>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="receipt-item receipt-total">
+                            <span>TOTAL:</span>
+                            <span>Rp <span id="receiptTotal">752.500</span></span>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="receipt-item">
+                            <span class="receipt-label">Metode Pembayaran:</span>
+                            <span id="receiptPaymentMethod">Transfer Bank</span>
+                        </div>
+                        
+                        <div class="receipt-item" id="receiptSourceField">
+                            <span class="receipt-label">Rekening Sumber:</span>
+                            <span id="receiptSourceAccount">987-654-3210 (Budi Santoso)</span>
+                        </div>
+                        
+                        <div class="receipt-item">
+                            <span class="receipt-label">Rekening Tujuan:</span>
+                            <span id="receiptTargetAccount">NOREK (OPS SALAM SATU DATA)</span>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="receipt-item">
+                            <span class="receipt-label">Status:</span>
+                            <span style="color: green; font-weight: bold;">BERHASIL</span>
+                        </div>
+                        
+                        <div class="receipt-item">
+                            <span class="receipt-label">Catatan:</span>
+                            <span id="receiptNotes">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="receipt-footer">
+                        <p>Terima kasih telah menggunakan layanan PayHub</p>
+                        <p>** Struk ini sebagai bukti pembayaran yang sah **</p>
+                        <p>www.payhub.com</p>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-print" onclick="window.print()">
+                        <i class="fas fa-print"></i> Cetak Struk
+                    </button>
+                    <button class="btn btn-download" onclick="downloadReceipt()">
+                        <i class="fas fa-download"></i> Download JPG
+                    </button>
+                    <button class="btn btn-reset" onclick="resetForm()">
+                        <i class="fas fa-redo"></i> Transaksi Baru
+                    </button>
+                    <button class="btn" onclick="saveTransaction()">
+                        <i class="fas fa-save"></i> Simpan Transaksi
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="statistics" id="statisticsSection" style="display: none;">
+            <div class="stat-card">
+                <i class="fas fa-money-bill-wave"></i>
+                <div class="value" id="totalTransactions">0</div>
+                <div class="label">Total Transaksi</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-chart-line"></i>
+                <div class="value" id="totalAmount">Rp 0</div>
+                <div class="label">Total Nilai</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-bolt"></i>
+                <div class="value" id="electricityTransactions">0</div>
+                <div class="label">Transaksi Listrik</div>
+            </div>
+        </div>
+        
+        <div class="history-section">
+            <h2 class="history-title"><i class="fas fa-history"></i> Riwayat Transaksi Terbaru</h2>
+            <div class="history-list" id="transactionHistory">
+                <div class="history-item">
+                    <div>
+                        <div>Pembayaran Listrik - REF20231025-001</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">25 Oktober 2023</div>
+                    </div>
+                    <div>Rp 752.500</div>
+                </div>
+                <div class="history-item">
+                    <div>
+                        <div>Pembayaran Internet - REF20231024-005</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">24 Oktober 2023</div>
+                    </div>
+                    <div>Rp 450.000</div>
+                </div>
+                <div class="history-item">
+                    <div>
+                        <div>Pembayaran Air - REF20231023-003</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">23 Oktober 2023</div>
+                    </div>
+                    <div>Rp 185.750</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <div id="notificationMessage">Operasi berhasil dilakukan</div>
+    </div>
+
+    <script>
+        // Update tanggal dan waktu
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                day: '2-digit', 
+                month: 'long', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('datetime').textContent = now.toLocaleDateString('id-ID', options);
+        }
+        
+        // Update setiap detik
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+        
+        // Toggle field berdasarkan kategori pembayaran
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const paymentCategoryInput = document.getElementById('paymentCategory');
+        const customFieldLabel = document.getElementById('customFieldLabel');
+        const customFieldInput = document.getElementById('customField');
+        const voucherField = document.querySelector('.voucher-field');
+        const voucherDisplay = document.getElementById('voucherDisplay');
+        
+        const categoryFields = {
+            'listrik': { label: 'Daya Listrik (VA)', placeholder: 'Contoh: 900, 1300, 2200', icon: 'bolt' },
+            'internet': { label: 'Kecepatan Internet', placeholder: 'Contoh: 50Mbps, 100Mbps', icon: 'wifi' },
+            'air': { label: 'Meter Air', placeholder: 'Contoh: 0012345', icon: 'tint' },
+            'telepon': { label: 'No. Telepon', placeholder: 'Contoh: 0211234567', icon: 'phone' },
+            'tv': { label: 'Paket TV', placeholder: 'Contoh: Basic, Premium', icon: 'tv' },
+            'pajak': { label: 'Jenis Pajak', placeholder: 'Contoh: Pajak Kendaraan, PBB', icon: 'receipt' }
+        };
+        
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Hapus kelas active dari semua tombol
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Tambahkan kelas active ke tombol yang diklik
+                this.classList.add('active');
+                
+                // Dapatkan nilai kategori
+                const category = this.getAttribute('data-category');
+                paymentCategoryInput.value = category;
+                
+                // Ubah label dan placeholder sesuai kategori
+                customFieldLabel.innerHTML = `<i class="fas fa-${categoryFields[category].icon}"></i> ${categoryFields[category].label}`;
+                customFieldInput.placeholder = categoryFields[category].placeholder;
+                
+                // Tampilkan field voucher hanya untuk listrik
+                if (category === 'listrik') {
+                    voucherField.style.display = 'block';
+                } else {
+                    voucherField.style.display = 'none';
+                    voucherDisplay.style.display = 'none';
+                }
+                
+                // Ubah juga di pratinjau struk
+                document.getElementById('receiptCustomLabel').textContent = categoryFields[category].label + ":";
+            });
+        });
+        
+        // Toggle field rekening berdasarkan metode pembayaran
+        const paymentMethod = document.getElementById('paymentMethod');
+        const accountFields = document.querySelector('.account-fields');
+        const sourceAccount = document.getElementById('sourceAccount');
+        const targetAccount = document.getElementById('targetAccount');
+        
+        paymentMethod.addEventListener('change', function() {
+            if (this.value === 'cash') {
+                accountFields.style.display = 'none';
+                document.getElementById('receiptSourceField').style.display = 'none';
+                sourceAccount.removeAttribute('required');
+            } else {
+                accountFields.style.display = 'block';
+                document.getElementById('receiptSourceField').style.display = 'flex';
+                sourceAccount.setAttribute('required', 'true');
+            }
+            
+            // Untuk e-wallet, ubah teks rekening tujuan
+            if (this.value === 'ewallet') {
+                targetAccount.value = 'Terkirim ke NOREK - SALAM SATU DATA';
+            } else if (this.value !== 'cash') {
+                targetAccount.value = 'NOREK - SALAM SATU DATA';
+            }
+        });
+        
+        // Format nomor voucher dengan strip
+        document.getElementById('voucherNumber').addEventListener('input', function(e) {
+            // Hapus semua karakter non-digit
+            let input = e.target.value.replace(/\D/g, '');
+            
+            // Batasi hingga 16 digit
+            if (input.length > 16) {
+                input = input.substring(0, 16);
+            }
+            
+            // Format dengan strip setiap 4 digit
+            let formatted = '';
+            for (let i = 0; i < input.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formatted += '-';
+                }
+                formatted += input[i];
+            }
+            
+            e.target.value = formatted;
+        });
+        
+        // Generate 16 digit voucher number dengan format strip
+        function generateVoucher() {
+            const digits = Array.from({length: 16}, () => Math.floor(Math.random() * 10)).join('');
+            let formatted = '';
+            for (let i = 0; i < digits.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formatted += '-';
+                }
+                formatted += digits[i];
+            }
+            return formatted;
+        }
+        
+        // Tampilkan notifikasi
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const icon = notification.querySelector('i');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            messageEl.textContent = message;
+            
+            // Hapus kelas sebelumnya
+            notification.classList.remove('success', 'error');
+            
+            // Tambahkan kelas sesuai jenis notifikasi
+            notification.classList.add(type);
+            
+            // Tampilkan notifikasi
+            notification.classList.add('show');
+            
+            // Sembunyikan setelah 3 detik
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Generate receipt dari input form
+        function generateReceipt() {
+            // Ambil nilai dari form
+            const paymentCategory = document.getElementById('paymentCategory').value;
+            const customerId = document.getElementById('customerId').value;
+            const customerName = document.getElementById('customerName').value;
+            const customField = document.getElementById('customField').value;
+            const billingPeriod = document.getElementById('billingPeriod').value;
+            const dueDate = document.getElementById('dueDate').value;
+            const billAmount = document.getElementById('billAmount').value;
+            const adminFee = document.getElementById('adminFee').value;
+            const paymentMethodValue = document.getElementById('paymentMethod').value;
+            const sourceAccountValue = document.getElementById('sourceAccount').value;
+            const targetAccountValue = document.getElementById('targetAccount').value;
+            const notes = document.getElementById('notes').value;
+            let voucherNumber = document.getElementById('voucherNumber').value;
+            
+            // Validasi input
+            if (!customerId || !customerName || !billingPeriod || !billAmount || !customField) {
+                showNotification('Harap isi semua field yang wajib diisi!', 'error');
+                return;
+            }
+            
+            // Validasi khusus untuk listrik - nomor voucher
+            if (paymentCategory === 'listrik') {
+                if (!voucherNumber) {
+                    // Generate nomor voucher otomatis jika kosong
+                    voucherNumber = generateVoucher();
+                    document.getElementById('voucherNumber').value = voucherNumber;
+                    
+                    // Tampilkan voucher yang dihasilkan
+                    document.getElementById('generatedVoucher').textContent = voucherNumber;
+                    voucherDisplay.style.display = 'block';
+                } else if (voucherNumber.replace(/\D/g, '').length !== 16) {
+                    showNotification('Nomor voucher harus 16 digit!', 'error');
+                    return;
+                } else {
+                    // Tampilkan voucher yang diinput
+                    document.getElementById('generatedVoucher').textContent = voucherNumber;
+                    voucherDisplay.style.display = 'block';
+                }
+            } else {
+                // Sembunyikan tampilan voucher untuk non-listrik
+                voucherDisplay.style.display = 'none';
+            }
+            
+            // Validasi untuk metode pembayaran non-tunai
+            if (paymentMethodValue !== 'cash' && !sourceAccountValue) {
+                showNotification('Harap isi rekening sumber untuk metode pembayaran non-tunai!', 'error');
+                return;
+            }
+            
+            // Format angka ke format Rupiah
+            function formatRupiah(angka) {
+                return parseInt(angka).toLocaleString('id-ID');
+            }
+            
+            // Format tanggal
+            function formatDate(dateString) {
+                if (!dateString) return '-';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+            }
+            
+            // Hitung total
+            const total = parseInt(billAmount) + parseInt(adminFee);
+            
+            // Update receipt
+            document.getElementById('receiptPaymentType').textContent = paymentCategory.toUpperCase();
+            document.getElementById('receiptCustomerId').textContent = customerId;
+            document.getElementById('receiptCustomerName').textContent = customerName;
+            document.getElementById('receiptCustomValue').textContent = customField;
+            document.getElementById('receiptBillingPeriod').textContent = billingPeriod;
+            document.getElementById('receiptDueDate').textContent = formatDate(dueDate);
+            document.getElementById('receiptBillAmount').textContent = formatRupiah(billAmount);
+            document.getElementById('receiptAdminFee').textContent = formatRupiah(adminFee);
+            document.getElementById('receiptTotal').textContent = formatRupiah(total);
+            document.getElementById('receiptPaymentMethod').textContent = document.getElementById('paymentMethod').options[document.getElementById('paymentMethod').selectedIndex].text;
+            
+            // Tampilkan nomor voucher hanya untuk listrik
+            if (paymentCategory === 'listrik') {
+                document.getElementById('receiptVoucherNumber').textContent = voucherNumber;
+                document.getElementById('receiptVoucherField').style.display = 'flex';
+            } else {
+                document.getElementById('receiptVoucherField').style.display = 'none';
+            }
+            
+            // Atur informasi rekening berdasarkan metode pembayaran
+            if (paymentMethodValue === 'cash') {
+                document.getElementById('receiptSourceAccount').textContent = 'Pembayaran Tunai';
+                document.getElementById('receiptTargetAccount').textContent = 'Diterima Langsung';
+            } else {
+                document.getElementById('receiptSourceAccount').textContent = sourceAccountValue;
+                document.getElementById('receiptTargetAccount').textContent = targetAccountValue;
+            }
+            
+            document.getElementById('receiptNotes').textContent = notes || '-';
+            
+            // Generate nomor referensi acak
+            const refNumber = 'REF' + new Date().getTime();
+            document.getElementById('refNumber').textContent = refNumber;
+            
+            // Animasi konfirmasi
+            const receipt = document.getElementById('receipt');
+            receipt.style.animation = 'none';
+            setTimeout(() => {
+                receipt.style.animation = 'fadeIn 0.5s ease';
+            }, 10);
+            
+            showNotification('Struk berhasil dibuat! Silahkan cetak atau download sebagai bukti pembayaran.');
+        }
+        
+        // Download struk sebagai JPG
+        function downloadReceipt() {
+            const receipt = document.getElementById('receipt');
+            
+            // Tampilkan indikator loading
+            const downloadBtn = document.querySelector('.btn-download');
+            const originalHtml = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<div class="spinner"></div> Memproses...';
+            downloadBtn.disabled = true;
+            
+            // Gunakan html2canvas untuk mengkonversi ke gambar
+            html2canvas(receipt, {
+                scale: 2, // Kualitas lebih tinggi
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                // Konversi canvas to data URL
+                const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                
+                // Buat link untuk download
+                const link = document.createElement('a');
+                link.href = imgData;
+                link.download = 'struk-payhub-' + new Date().getTime() + '.jpg';
+                
+                // Trigger download
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Kembalikan tombol ke keadaan semula
+                downloadBtn.innerHTML = originalHtml;
+                downloadBtn.disabled = false;
+                
+                showNotification('Struk berhasil didownload sebagai JPG!');
+            });
+        }
+        
+        // Reset form
+        function resetForm() {
+            document.getElementById('customerId').value = '';
+            document.getElementById('customerName').value = '';
+            document.getElementById('customField').value = '';
+            document.getElementById('billingPeriod').value = '';
+            document.getElementById('dueDate').value = '';
+            document.getElementById('billAmount').value = '';
+            document.getElementById('sourceAccount').value = '';
+            document.getElementById('targetAccount').value = 'NOREK - SALAM SATU DATA';
+            document.getElementById('notes').value = '';
+            document.getElementById('voucherNumber').value = '';
+            
+            // Sembunyikan tampilan voucher
+            document.getElementById('voucherDisplay').style.display = 'none';
+            
+            // Reset metode pembayaran ke default
+            document.getElementById('paymentMethod').value = 'transfer';
+            document.querySelector('.account-fields').style.display = 'block';
+            document.getElementById('receiptSourceField').style.display = 'flex';
+            
+            showNotification('Form telah direset. Silahkan isi data baru.');
+        }
+        
+        // Simpan transaksi ke riwayat
+        function saveTransaction() {
+            const total = document.getElementById('receiptTotal').textContent;
+            const refNumber = document.getElementById('refNumber').textContent;
+            const paymentType = document.getElementById('receiptPaymentType').textContent;
+            
+            if (refNumber === 'REF20231025-001') {
+                showNotification('Harap generate struk terlebih dahulu sebelum menyimpan!', 'error');
+                return;
+            }
+            
+            // Buat item riwayat baru
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            
+            const now = new Date();
+            const dateFormatted = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+            
+            historyItem.innerHTML = `
+                <div>
+                    <div>Pembayaran ${paymentType} - ${refNumber}</div>
+                    <div style="font-size: 0.8rem; color: var(--gray);">${dateFormatted}</div>
+                </div>
+                <div>Rp ${total}</div>
+            `;
+            
+            // Tambahkan ke daftar riwayat
+            const historyList = document.getElementById('transactionHistory');
+            historyList.insertBefore(historyItem, historyList.firstChild);
+            
+            // Simpan ke localStorage
+            saveToLocalStorage({
+                refNumber,
+                paymentType,
+                total,
+                date: dateFormatted
+            });
+            
+            showNotification('Transaksi berhasil disimpan ke riwayat!');
+        }
+        
+        // Simpan ke localStorage
+        function saveToLocalStorage(transaction) {
+            let transactions = JSON.parse(localStorage.getItem('payhubTransactions')) || [];
+            transactions.unshift(transaction);
+            
+            // Simpan maksimal 50 transaksi
+            if (transactions.length > 50) {
+                transactions = transactions.slice(0, 50);
+            }
+            
+            localStorage.setItem('payhubTransactions', JSON.stringify(transactions));
+        }
+        
+        // Muat riwayat dari localStorage
+        function loadFromLocalStorage() {
+            const transactions = JSON.parse(localStorage.getItem('payhubTransactions')) || [];
+            const historyList = document.getElementById('transactionHistory');
+            
+            // Kosongkan riwayat default
+            historyList.innerHTML = '';
+            
+            // Tambahkan transaksi dari localStorage
+            transactions.forEach(transaction => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div>
+                        <div>Pembayaran ${transaction.paymentType} - ${transaction.refNumber}</div>
+                        <div style="font-size: 0.8rem; color: var(--gray);">${transaction.date}</div>
+                    </div>
+                    <div>Rp ${transaction.total}</div>
+                `;
+                historyList.appendChild(historyItem);
+            });
+            
+            // Hitung statistik
+            calculateStatistics(transactions);
+        }
+        
+        // Hitung statistik
+        function calculateStatistics(transactions) {
+            const totalTransactions = transactions.length;
+            let totalAmount = 0;
+            let electricityTransactions = 0;
+            
+            transactions.forEach(transaction => {
+                // Ekstrak angka dari format "xxx.xxx"
+                const amount = parseInt(transaction.total.replace(/\./g, ''));
+                totalAmount += amount;
+                
+                if (transaction.paymentType.toLowerCase() === 'listrik') {
+                    electricityTransactions++;
+                }
+            });
+            
+            // Update UI
+            document.getElementById('totalTransactions').textContent = totalTransactions;
+            document.getElementById('totalAmount').textContent = 'Rp ' + totalAmount.toLocaleString('id-ID');
+            document.getElementById('electricityTransactions').textContent = electricityTransactions;
+        }
+        
+        // Tampilkan/sembunyikan statistik
+        function showStatistics() {
+            const statisticsSection = document.getElementById('statisticsSection');
+            if (statisticsSection.style.display === 'none') {
+                statisticsSection.style.display = 'grid';
+                showNotification('Statistik transaksi ditampilkan.');
+            } else {
+                statisticsSection.style.display = 'none';
+            }
+        }
+        
+        // Isi cepat form berdasarkan kategori
+        function quickFill(category) {
+            // Aktifkan kategori yang dipilih
+            categoryButtons.forEach(btn => {
+                if (btn.getAttribute('data-category') === category) {
+                    btn.click();
+                }
+            });
+            
+            // Isi dengan data contoh berdasarkan kategori
+            const examples = {
+                'listrik': {
+                    customerId: '532110000123',
+                    customerName: 'Budi Santoso',
+                    customField: '1300',
+                    billingPeriod: 'Oktober 2023',
+                    billAmount: '350000',
+                    voucherNumber: generateVoucher()
+                },
+                'internet': {
+                    customerId: 'INET8812056',
+                    customerName: 'Sari Indah',
+                    customField: '100Mbps',
+                    billingPeriod: 'Oktober 2023',
+                    billAmount: '495000'
+                },
+                'air': {
+                    customerId: 'PAM3375021',
+                    customerName: 'Ahmad Yani',
+                    customField: '0053218',
+                    billingPeriod: 'Oktober 2023',
+                    billAmount: '187500'
+                }
+            };
+            
+            if (examples[category]) {
+                const example = examples[category];
+                document.getElementById('customerId').value = example.customerId;
+                document.getElementById('customerName').value = example.customerName;
+                document.getElementById('customField').value = example.customField;
+                document.getElementById('billingPeriod').value = example.billingPeriod;
+                document.getElementById('billAmount').value = example.billAmount;
+                
+                if (example.voucherNumber) {
+                    document.getElementById('voucherNumber').value = example.voucherNumber;
+                }
+                
+                showNotification(`Form berhasil diisi dengan data contoh ${category}.`);
+            }
+        }
+        
+        // Inisialisasi halaman
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set tanggal jatuh tempo default (7 hari dari sekarang)
+            const nextWeek = new Date();
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            document.getElementById('dueDate').valueAsDate = nextWeek;
+            
+            // Set rekening tujuan default
+            document.getElementById('targetAccount').value = 'Masukannomorrekening - Nama Pemilik rekening';
+            
+            // Muat riwayat dari localStorage
+            loadFromLocalStorage();
+        });
+    </script>
+</body>
+</html>
